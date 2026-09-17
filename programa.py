@@ -14,15 +14,15 @@ conexao = mysql.connector.connect(
 cursor = conexao.cursor()
 
 nome = input("Digite o nome: ")
-data_nacimento = input("Digite a data de nascimento (AAAA-MM-DD): ")
+data_nascimento = input("Digite a data de nascimento (AAAA-MM-DD): ")
 email = input("Digite o email: ")
 
 sql = """
-INSERT INTO clientes (nome, data_nacimento, email)
+INSERT INTO clientes (nome, data_nascimento, email)
 VALUES (%s, %s, %s)
 """
 
-dados = (nome, data_nacimento, email)
+dados = (nome, data_nascimento, email)
 cursor.execute(sql, dados)
 conexao.commit()
 
