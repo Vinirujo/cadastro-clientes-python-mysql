@@ -13,6 +13,75 @@ conexao = mysql.connector.connect(
 
 cursor = conexao.cursor()
 
+def cadastrar_cliente():
+    nome = input ("Coloque o nome: ")
+    data_nascimento = input("Digite a data de nascimento (AAAA-MM-DD): ")
+    email = input("Digite o email: ")
+            
+    sql = """
+    insert into clientes (nome, data_nascimento, email) 
+    values (%s, %s, %s)
+    """
+            
+    dados = (nome, data_nascimento, email)
+            
+    cursor.execute(sql, dados)
+    conexao.commit()
+            
+    print("Cliente cadastrado com sucesso!")
+    
+def listar_clientes():    
+    cursor.execute("SELECT * FROM clientes")
+    resultados = cursor.fetchall()
+    
+    if resultados:
+        for cliente in resultados:
+            print(cliente)
+    else:
+        print("Nenhum cliente encontrado.")
+
+def atualizar_cliente():
+    id_cliente = int(input("Coloque o ID do cliente: "))
+    novo_email = input("Digite o novo email: ")
+            
+    sql = """
+        UPDATE clientes 
+        set email = %s 
+        WHERE id = %s
+        """ 
+
+            
+    dados = (novo_email, id_cliente)
+            
+    cursor.execute(sql, dados)
+    conexao.commit()
+            
+    if cursor.rowcount > 0:
+        print("Cliente atualizado com sucesso!")
+    else:
+        print("Nenhum cliente encontrado com esse ID.")
+        
+def excluir_cliente():
+    id_cliente = int(input("Digite o id do cliente: "))
+    
+    confirmacao = input("Tem certeza que você quer excluir este cliente?(S/N): ").upper()
+    
+    if confirmacao == "S":
+        sql = "DELETE FROM clientes WHERE id = %s"
+        
+        dados = (id_cliente,)
+        
+        cursor.execute(sql, dados)
+        conexao.commit()
+        
+        if cursor.rowcount > 0:
+            print("Cliente excluído com sucesso!")
+        else:
+            print("Nenhum cliente encontrado com esse ID.")
+
+    else:
+        print("Exclusão cancelada.")
+        
 while True:
     print("\n===== CADASTRO DE CLIENTES =====")
     print("1 - Cadastrar clientes")
@@ -24,76 +93,17 @@ while True:
     opcao = input("Escolha uma opção: ")
     
     if opcao == "1":
-        nome = input ("Coloque o nome: ")
-        data_nascimento = input("Digite a data de nascimento (AAAA-MM-DD): ")
-        email = input("Digite o email: ")
-        
-        sql = """
-        insert into clientes (nome, data_nascimento, email) 
-        values (%s, %s, %s)
-        """
-        
-        dados = (nome, data_nascimento, email)
-         
-        cursor.execute(sql, dados)
-        conexao.commit()
-        
-        print("Cliente cadastrado com sucesso!")
+        cadastrar_cliente()
 
     elif opcao == "2":
-        cursor.execute("SELECT * FROM clientes")
-        resultados = cursor.fetchall()
-        
-        if resultados:
-            for cliente in resultados:
-                print(cliente)
-                
-        else:
-            print("Nenhum cliente encontrado.")        
+        listar_clientes()        
 
     elif opcao == "3":
-        id_cliente = int(input("Coloque o ID do cliente: "))
-        novo_email = input("Digite o novo email: ")
-                
-        sql = """
-            UPDATE clientes 
-            set email = %s 
-            WHERE id = %s
-            """ 
-
-                
-        dados = (novo_email, id_cliente)
-                
-        cursor.execute(sql, dados)
-        conexao.commit()
-                
-        if cursor.rowcount > 0:
-            print("Cliente atualizado com sucesso!")
-        else:
-            print("Nenhum cliente encontrado com esse ID.")
+        atualizar_cliente()
 
     elif opcao == "4":
-        id_cliente = int(input("Digite o id do cliente: "))
-        
-        confirmacao = input("Tem certeza que você quer excluir este cliente?(S/N): ").upper()
-        
-        if confirmacao == "S":
-            sql = "DELETE FROM clientes WHERE id = %s"
+        excluir_cliente()
             
-            dados = (id_cliente,)
-            
-            cursor.execute(sql, dados)
-            conexao.commit()
-            
-            if cursor.rowcount > 0:
-                print("Cliente excluído com sucesso!")
-            else:
-                print("Nenhum cliente encontrado com esse ID.")
-
-        else:
-            print("Exclusão cancelada.")
-            
-
     elif opcao == "0":
         print("Encerrando o programa...")
         break
